@@ -2,11 +2,6 @@
 
 ## Representation-Based Unsupervised Detection of Poisoning Attacks in Federated Learning
 
-**Author:** B.Tech Student, IIIT Kottayam  
-**Guide:** [Advisor Name]  
-**Year:** 2026  
-
----
 
 ## Project Objective
 
