@@ -1,4 +1,4 @@
-# BTP-FL-Poisoning
+# BTP-FL-Poisoning.
 
 ## Representation-Based Unsupervised Detection of Poisoning Attacks in Federated Learning
 
@@ -166,17 +166,7 @@ python -m experiments.run_ablation --feature_set cka
 python -m experiments.run_ablation --feature_set combined
 ```
 
----
 
-## Key Research Integrity Rules
-
-1. **Never use ground-truth attack labels in the detector.** Labels are only for evaluation metrics.
-2. **Never fabricate results.** All claims must be backed by experimental runs.
-3. **Document every design decision** that could affect experimental validity.
-4. **Do not silently change** the FedCVG or FedCC algorithms to make them perform better.
-5. **If proposed method underperforms**, report it honestly and analyze why.
-
----
 
 ## Reference Repositories
 
