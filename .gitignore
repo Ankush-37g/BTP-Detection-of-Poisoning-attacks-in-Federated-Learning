@@ -1,0 +1,44 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# External reference repositories (cloned locally for inspection only)
+# Access originals at: https://github.com/zhangsanry/FedCVG
+#                      https://github.com/HyejunJeong/FedCC
+external/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Datasets (auto-downloaded at runtime)
+data/
+# Experiment results (large files)
+results/raw/
+results/checkpoints/
+logs/*.log
+logs/*.txt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Environment record (keep)
+!docs/environment.md

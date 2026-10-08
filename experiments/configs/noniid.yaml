@@ -1,0 +1,25 @@
+# Non-IID experiment configuration (Phase 2 baseline)
+# Dirichlet alpha = 0.5  (moderate heterogeneity — standard FL benchmark value)
+
+dataset: MNIST
+data_root: ./data
+model: LeNet5
+
+num_clients: 10
+clients_per_round: 10
+num_rounds: 10
+local_epochs: 2
+batch_size: 32
+lr: 0.01
+momentum: 0.9
+weight_decay: 1.0e-4
+
+partition: noniid
+alpha: 0.5          # Dirichlet alpha — change to 0.1, 1.0, 10.0 to explore heterogeneity
+
+attack: none
+malicious_fraction: 0.0
+
+defense: fedavg
+seed: 42
+results_dir: experiments/results

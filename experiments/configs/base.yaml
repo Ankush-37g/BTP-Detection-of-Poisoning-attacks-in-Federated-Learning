@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Base experiment configuration
+# All values here are defaults that can be overridden via CLI flags.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+dataset: MNIST          # MNIST | FashionMNIST | CIFAR10
+data_root: ./data       # Where datasets are downloaded / cached
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+model: LeNet5           # LeNet5 | SimpleCNN
+
+# ── Federated Learning ────────────────────────────────────────────────────────
+num_clients: 10         # Total number of FL clients
+clients_per_round: 10   # Clients selected per round (set to num_clients for full participation)
+num_rounds: 5           # Number of FL communication rounds
+local_epochs: 1         # Local training epochs per client per round
+batch_size: 32          # Local mini-batch size
+lr: 0.01                # SGD learning rate
+momentum: 0.9           # SGD momentum
+weight_decay: 1.0e-4    # SGD weight decay
+
+# ── Data Partition ────────────────────────────────────────────────────────────
+partition: iid          # iid | noniid
+alpha: 0.5              # Dirichlet alpha (only used when partition=noniid)
+                        # Typical values: 10.0, 1.0, 0.5, 0.1
+
+# ── Attack ────────────────────────────────────────────────────────────────────
+attack: none            # none | sign_flip | scaling | backdoor
+malicious_fraction: 0.0 # Fraction of clients that are malicious (0.0 = no attack)
+
+# ── Defense ───────────────────────────────────────────────────────────────────
+defense: fedavg         # fedavg | fedcvg | fedcc | proposed
+
+# ── Reproducibility ───────────────────────────────────────────────────────────
+seed: 42
+
+# ── Results ───────────────────────────────────────────────────────────────────
+results_dir: experiments/results
