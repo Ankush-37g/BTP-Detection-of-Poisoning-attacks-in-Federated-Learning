@@ -15,6 +15,8 @@ Reference for Median/Trimmed Mean:
 
 from typing import List, Tuple, Dict, Any
 import torch
+import numpy as np
+from sklearn.cluster import KMeans
 
 StateDict = Dict[str, torch.Tensor]
 
@@ -146,4 +148,131 @@ def multi_krum(client_updates: List[Tuple[StateDict, int]], f: int = 1, m: int =
     from proposed.aggregation.fedavg import fedavg
     # For standard Krum (m=1), FedAvg just returns that single client's weights
     return fedavg(selected_updates, uniform_weights=False)
+
+
+def fedcvg(client_updates: List[Tuple[StateDict, int]], global_weights: StateDict = None, **kwargs) -> StateDict:
+    """
+    FedCVG-style Stage 1 detection baseline.
+    Computes the L2 norm of the update (w_local - w_global) for each client.
+    Uses K-Means (K=2) on the update norms.
+    Assumes the cluster with the smaller median norm (or larger size if medians are close) is benign, 
+    but a standard heuristic is to assume the larger cluster is benign.
+    We will use the cluster size heuristic (larger cluster = benign), which is standard for unsupervised FL anomaly detection.
+    """
+    if global_weights is None:
+        raise ValueError("fedcvg requires global_weights to compute update norms.")
+        
+    n_clients = len(client_updates)
+    if n_clients <= 2:
+        from proposed.aggregation.fedavg import fedavg
+        return fedavg(client_updates, uniform_weights=False)
+        
+    # 1. Compute update norms
+    flat_global = _flatten_state_dict(global_weights).float().cpu()
+    norms = []
+    
+    for update, _ in client_updates:
+        flat_local = _flatten_state_dict(update).float().cpu()
+        delta_w = flat_local - flat_global
+        norm = torch.norm(delta_w, p=2).item()
+        norms.append([norm])  # 2D array for KMeans
+        
+    norms_arr = np.array(norms)
+    
+    # 2. KMeans Clustering (K=2)
+    kmeans = KMeans(n_clusters=2, random_state=42, n_init=10)
+    labels = kmeans.fit_predict(norms_arr)
+    
+    # 3. Identify benign cluster
+    # Heuristic: the larger cluster is benign (assuming > 50% benign clients)
+    count_0 = np.sum(labels == 0)
+    count_1 = np.sum(labels == 1)
+    
+    benign_label = 0 if count_0 >= count_1 else 1
+    
+    # If the clusters are equally sized, fallback to the one with the smaller mean norm
+    if count_0 == count_1:
+        mean_0 = np.mean(norms_arr[labels == 0])
+        mean_1 = np.mean(norms_arr[labels == 1])
+        benign_label = 0 if mean_0 < mean_1 else 1
+        
+    # 4. Filter and aggregate
+    selected_updates = [client_updates[i] for i in range(n_clients) if labels[i] == benign_label]
+    
+    from proposed.aggregation.fedavg import fedavg
+    return fedavg(selected_updates, uniform_weights=False)
+
+def linear_cka(X: torch.Tensor, Y: torch.Tensor) -> float:
+    """
+    Computes Linear Centered Kernel Alignment (CKA) between two 2D matrices.
+    Using the efficient formulation: HSIC(X, Y) = ||X_c^T Y_c||_F^2
+    """
+    if X.dim() == 1:
+        X = X.unsqueeze(1)
+    if Y.dim() == 1:
+        Y = Y.unsqueeze(1)
+        
+    # Center columns
+    X_c = X - X.mean(dim=0)
+    Y_c = Y - Y.mean(dim=0)
+    
+    hsic_xy = torch.norm(torch.mm(X_c.t(), Y_c), p='fro') ** 2
+    hsic_xx = torch.norm(torch.mm(X_c.t(), X_c), p='fro') ** 2
+    hsic_yy = torch.norm(torch.mm(Y_c.t(), Y_c), p='fro') ** 2
+    
+    if hsic_xx == 0 or hsic_yy == 0:
+        return 0.0
+    return (hsic_xy / torch.sqrt(hsic_xx * hsic_yy)).item()
+
+
+def fedcc(client_updates: List[Tuple[StateDict, int]], global_weights: StateDict = None, **kwargs) -> StateDict:
+    """
+    FedCC-style Stage 1 detection baseline.
+    Computes Linear CKA between the client's penultimate layer weight matrix and the global model's.
+    Uses K-Means (K=2) on the 1D CKA similarity scores.
+    The cluster with the HIGHER mean CKA similarity to the global model is considered benign.
+    """
+    if global_weights is None:
+        raise ValueError("fedcc requires global_weights to compute CKA similarities.")
+        
+    n_clients = len(client_updates)
+    if n_clients <= 2:
+        from proposed.aggregation.fedavg import fedavg
+        return fedavg(client_updates, uniform_weights=False)
+        
+    # 1. Identify penultimate weight layer (typically 4th from last key in standard networks like LeNet)
+    keys = list(global_weights.keys())
+    penultimate_key = keys[-4]
+    
+    global_pl = global_weights[penultimate_key].float().cpu()
+    
+    # 2. Compute CKA scores
+    cka_scores = []
+    for update, _ in client_updates:
+        local_pl = update[penultimate_key].float().cpu()
+        score = linear_cka(local_pl, global_pl)
+        cka_scores.append([score])
+        
+    cka_arr = np.array(cka_scores)
+    
+    # 3. KMeans Clustering (K=2)
+    kmeans = KMeans(n_clusters=2, random_state=42, n_init=10)
+    labels = kmeans.fit_predict(cka_arr)
+    
+    # 4. Identify benign cluster
+    mean_0 = np.mean(cka_arr[labels == 0])
+    mean_1 = np.mean(cka_arr[labels == 1])
+    
+    benign_label = 0 if mean_0 > mean_1 else 1
+    
+    # 5. Filter and aggregate
+    selected_updates = [client_updates[i] for i in range(n_clients) if labels[i] == benign_label]
+    
+    from proposed.aggregation.fedavg import fedavg
+    if not selected_updates:
+        selected_updates = client_updates
+        
+    return fedavg(selected_updates, uniform_weights=False)
+
+
 

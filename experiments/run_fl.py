@@ -45,7 +45,7 @@ from proposed.models.lenet import build_model
 from proposed.federated.client import FLClient
 from proposed.federated.server import FLServer
 from proposed.aggregation.fedavg import fedavg
-from proposed.aggregation.baselines import median, trimmed_mean, krum, multi_krum
+from proposed.aggregation.baselines import median, trimmed_mean, krum, multi_krum, fedcvg, fedcc
 from proposed.evaluation.metrics import ResultLogger
 
 
@@ -260,9 +260,12 @@ def _get_aggregator(cfg: dict):
         f = cfg.get("krum_f", 1)
         m = cfg.get("krum_m", 1)
         return functools.partial(multi_krum, f=f, m=m)
-    elif defense in ("fedcvg", "fedcc", "proposed"):
-        # Phases 5–7 will register their aggregators here.
-        # For now, fall back to FedAvg so the runner doesn't crash.
+    elif defense == "fedcvg":
+        return fedcvg
+    elif defense == "fedcc":
+        return fedcc
+    elif defense == "proposed":
+        # Phase 6/7 will register their aggregator here.
         print(f"  [WARN] Defense '{defense}' not yet implemented. Using FedAvg.")
         return fedavg
     else:

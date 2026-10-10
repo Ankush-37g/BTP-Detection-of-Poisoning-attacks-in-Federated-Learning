@@ -108,7 +108,7 @@ class FLServer:
             client_losses.append(loss)
 
         # 4. Aggregation
-        aggregated_weights = self.aggregator(client_results)
+        aggregated_weights = self.aggregator(client_results, global_weights=global_weights)
 
         # 5. Update global model
         self.global_model.load_state_dict(

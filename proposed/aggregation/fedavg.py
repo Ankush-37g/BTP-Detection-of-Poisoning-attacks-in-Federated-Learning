@@ -32,6 +32,7 @@ StateDict = Dict[str, torch.Tensor]
 def fedavg(
     client_updates: List[Tuple[StateDict, int]],
     uniform_weights: bool = False,
+    **kwargs
 ) -> StateDict:
     """
     Federated Averaging aggregation.
