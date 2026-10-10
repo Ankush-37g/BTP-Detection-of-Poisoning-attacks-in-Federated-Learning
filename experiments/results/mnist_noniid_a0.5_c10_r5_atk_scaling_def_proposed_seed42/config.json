@@ -1,0 +1,21 @@
+{
+  "dataset": "MNIST",
+  "data_root": "./data",
+  "model": "LeNet5",
+  "num_clients": 10,
+  "clients_per_round": 10,
+  "num_rounds": 5,
+  "local_epochs": 2,
+  "batch_size": 32,
+  "lr": 0.01,
+  "momentum": 0.9,
+  "weight_decay": 0.0001,
+  "partition": "noniid",
+  "alpha": 0.5,
+  "attack": "scaling",
+  "malicious_fraction": 0.3,
+  "scale_factor": 10.0,
+  "defense": "proposed",
+  "seed": 42,
+  "results_dir": "experiments/results"
+}

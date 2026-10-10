@@ -125,8 +125,8 @@ The implementation is split into two clearly separated layers:
 | **Phase 3** | Poisoning attacks | 🔲 Pending |
 | **Phase 4** | FedAvg baseline under poisoning | ✅ Complete |
 | **Phase 5** | Defense baselines (FedCVG, FedCC) | ✅ Complete |
-| **Phase 6** | Proposed feature extraction (update + CKA) | 🔲 Pending |
-| **Phase 7** | K-Means detector + robust aggregation | 🔲 Pending |
+| **Phase 6** | Proposed feature extraction (update + CKA) | ✅ Complete |
+| **Phase 7** | K-Means detector + robust aggregation | ✅ Complete |
 | **Ablation** | Update-only vs CKA-only vs Combined | 🔲 Pending |
 | **Evaluation** | Systematic experiments + plots | 🔲 Pending |
 

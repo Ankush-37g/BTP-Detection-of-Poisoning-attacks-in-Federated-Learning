@@ -46,6 +46,7 @@ from proposed.federated.client import FLClient
 from proposed.federated.server import FLServer
 from proposed.aggregation.fedavg import fedavg
 from proposed.aggregation.baselines import median, trimmed_mean, krum, multi_krum, fedcvg, fedcc
+from proposed.aggregation.proposed import proposed_defense
 from proposed.evaluation.metrics import ResultLogger
 
 
@@ -265,9 +266,7 @@ def _get_aggregator(cfg: dict):
     elif defense == "fedcc":
         return fedcc
     elif defense == "proposed":
-        # Phase 6/7 will register their aggregator here.
-        print(f"  [WARN] Defense '{defense}' not yet implemented. Using FedAvg.")
-        return fedavg
+        return proposed_defense
     else:
         raise ValueError(f"Unknown defense: {defense}")
 
