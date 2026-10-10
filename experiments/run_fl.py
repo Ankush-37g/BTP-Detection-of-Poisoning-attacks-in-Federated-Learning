@@ -45,6 +45,7 @@ from proposed.models.lenet import build_model
 from proposed.federated.client import FLClient
 from proposed.federated.server import FLServer
 from proposed.aggregation.fedavg import fedavg
+from proposed.aggregation.baselines import median, trimmed_mean, krum, multi_krum
 from proposed.evaluation.metrics import ResultLogger
 
 
@@ -100,9 +101,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--scale_factor", type=float, default=10.0, help="Scaling factor for scaling attack")
     parser.add_argument(
         "--defense", type=str,
-        choices=["fedavg", "fedcvg", "fedcc", "proposed"],
+        choices=["fedavg", "median", "trimmed_mean", "krum", "multi_krum", "fedcvg", "fedcc", "proposed"],
         help="Defense / aggregation method",
     )
+    parser.add_argument("--krum_f", type=int, help="Number of Byzantine attackers for Krum/Multi-Krum")
+    parser.add_argument("--krum_m", type=int, help="Number of selected clients for Multi-Krum")
+    parser.add_argument("--trim_ratio", type=float, help="Fraction to trim for Trimmed Mean")
 
     # Misc
     parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
@@ -209,7 +213,7 @@ def run_experiment(cfg: dict) -> None:
     print(f"  Created {len(clients)} clients.")
 
     # ── 4. Select aggregator ──────────────────────────────────────────────────
-    aggregator = _get_aggregator(cfg["defense"])
+    aggregator = _get_aggregator(cfg)
 
     # ── 5. Run FL ─────────────────────────────────────────────────────────────
     results_dir = os.path.join(_PROJECT_ROOT, cfg.get("results_dir", "experiments/results"))
@@ -236,10 +240,26 @@ def run_experiment(cfg: dict) -> None:
     print("\nDone.")
 
 
-def _get_aggregator(defense: str):
+import functools
+
+def _get_aggregator(cfg: dict):
     """Return the aggregation function for the given defense."""
+    defense = cfg.get("defense", "fedavg")
+    
     if defense == "fedavg":
         return fedavg
+    elif defense == "median":
+        return median
+    elif defense == "trimmed_mean":
+        trim_ratio = cfg.get("trim_ratio", 0.1)
+        return functools.partial(trimmed_mean, trim_ratio=trim_ratio)
+    elif defense == "krum":
+        f = cfg.get("krum_f", 1) # Default to 1 attacker assumption
+        return functools.partial(krum, f=f)
+    elif defense == "multi_krum":
+        f = cfg.get("krum_f", 1)
+        m = cfg.get("krum_m", 1)
+        return functools.partial(multi_krum, f=f, m=m)
     elif defense in ("fedcvg", "fedcc", "proposed"):
         # Phases 5–7 will register their aggregators here.
         # For now, fall back to FedAvg so the runner doesn't crash.

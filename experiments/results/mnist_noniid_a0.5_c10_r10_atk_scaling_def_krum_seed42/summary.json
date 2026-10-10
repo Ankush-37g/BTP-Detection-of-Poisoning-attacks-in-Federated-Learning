@@ -1,0 +1,31 @@
+{
+  "experiment_id": "mnist_noniid_a0.5_c10_r10_atk_scaling_def_krum_seed42",
+  "config": {
+    "dataset": "MNIST",
+    "data_root": "./data",
+    "model": "LeNet5",
+    "num_clients": 10,
+    "clients_per_round": 10,
+    "num_rounds": 10,
+    "local_epochs": 2,
+    "batch_size": 32,
+    "lr": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "partition": "noniid",
+    "alpha": 0.5,
+    "attack": "scaling",
+    "malicious_fraction": 0.3,
+    "scale_factor": 10.0,
+    "defense": "krum",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "krum_f": 3
+  },
+  "start_datetime": "2026-10-10T22:34:02.897806",
+  "total_time_seconds": 198.52,
+  "total_rounds": 10,
+  "final_test_accuracy": 0.8291,
+  "final_test_loss": 0.8834907606244087,
+  "best_test_accuracy": 0.8445
+}

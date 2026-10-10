@@ -123,7 +123,7 @@ The implementation is split into two clearly separated layers:
 | **Phase 1** | Clean FL simulation (FedAvg, IID) | 🔲 Pending |
 | **Phase 2** | Non-IID data partitioning | 🔲 Pending |
 | **Phase 3** | Poisoning attacks | 🔲 Pending |
-| **Phase 4** | FedAvg baseline under poisoning | 🔲 Pending |
+| **Phase 4** | FedAvg baseline under poisoning | ✅ Complete |
 | **Phase 5** | Defense baselines (FedCVG, FedCC) | 🔲 Pending |
 | **Phase 6** | Proposed feature extraction (update + CKA) | 🔲 Pending |
 | **Phase 7** | K-Means detector + robust aggregation | 🔲 Pending |
