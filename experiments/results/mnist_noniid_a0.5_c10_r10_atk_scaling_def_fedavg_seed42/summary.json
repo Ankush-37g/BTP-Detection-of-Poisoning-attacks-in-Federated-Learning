@@ -21,8 +21,8 @@
     "seed": 42,
     "results_dir": "experiments/results"
   },
-  "start_datetime": "2026-10-04T00:57:23.645431",
-  "total_time_seconds": 149.43,
+  "start_datetime": "2026-10-11T00:05:23.609026",
+  "total_time_seconds": 201.22,
   "total_rounds": 10,
   "final_test_accuracy": 0.0982,
   "final_test_loss": 7.087660133838654,

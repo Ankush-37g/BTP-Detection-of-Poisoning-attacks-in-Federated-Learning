@@ -1,5 +1,5 @@
 {
-  "experiment_id": "mnist_noniid_a0.5_c10_r10_atk_scaling_def_krum_seed42",
+  "experiment_id": "mnist_noniid_a0.5_c10_r10_atk_scaling_def_fedcvg_seed42",
   "config": {
     "dataset": "MNIST",
     "data_root": "./data",
@@ -17,14 +17,14 @@
     "attack": "scaling",
     "malicious_fraction": 0.3,
     "scale_factor": 10.0,
-    "defense": "krum",
+    "defense": "fedcvg",
     "seed": 42,
     "results_dir": "experiments/results"
   },
-  "start_datetime": "2026-10-11T00:08:47.295094",
-  "total_time_seconds": 223.06,
+  "start_datetime": "2026-10-11T00:12:32.904951",
+  "total_time_seconds": 226.74,
   "total_rounds": 10,
-  "final_test_accuracy": 0.9278,
-  "final_test_loss": 0.24016216906020418,
-  "best_test_accuracy": 0.9308
+  "final_test_accuracy": 0.986,
+  "final_test_loss": 0.04512322923028478,
+  "best_test_accuracy": 0.9874
 }

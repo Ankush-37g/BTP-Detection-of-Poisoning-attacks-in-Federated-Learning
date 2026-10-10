@@ -15,7 +15,7 @@
   "attack": "scaling",
   "malicious_fraction": 0.3,
   "scale_factor": 10.0,
-  "defense": "krum",
+  "defense": "fedcc",
   "seed": 42,
   "results_dir": "experiments/results"
 }
