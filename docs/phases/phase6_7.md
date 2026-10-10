@@ -26,8 +26,8 @@ We apply **K-Means Clustering (K=2)** to these standardized 4D vectors.
 
 ### 3. Unsupervised Benign Identification
 Instead of hardcoding sizes or assuming the larger cluster is benign, we use a novel **Suspicion Score**:
-- $Score_{cluster} = \text{Normalized Mean Norm} - \text{Normalized Mean CKA_{global}}$
-- A cluster is highly suspicious if it has large update norms but low semantic similarity to the global model.
+- $Score_{cluster} = \text{Norm}_{norm} - \text{CKA}_{norm} - \text{Cosine}_{norm}$
+- A cluster is highly suspicious if it has large update norms, but low semantic similarity to the global model, and a negative cosine direction.
 - The cluster with the lower Suspicion Score is identified as benign and selected for FedAvg aggregation.
 
 ## Implementation Details
