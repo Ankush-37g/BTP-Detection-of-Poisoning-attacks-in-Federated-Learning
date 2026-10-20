@@ -1,27 +1,20 @@
-# Sign-flip attack experiment configuration
-
-dataset: MNIST
-data_root: ./data
-model: LeNet5
-
+dataset: mnist
+model: lenet5
 num_clients: 10
 clients_per_round: 10
-num_rounds: 10
 local_epochs: 2
 batch_size: 32
 lr: 0.01
 momentum: 0.9
-weight_decay: 1.0e-4
+weight_decay: 0.0001
 
-# We use Non-IID here because poisoning detection is harder under Non-IID.
-# This establishes the baseline for Phase 4-7.
+# Partitioning
 partition: noniid
 alpha: 0.5
 
-# 30% malicious clients
+# Attack setup
 attack: sign_flip
 malicious_fraction: 0.3
 
-defense: fedavg
-seed: 42
+# Experiment output
 results_dir: experiments/results

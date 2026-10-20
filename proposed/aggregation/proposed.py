@@ -118,18 +118,27 @@ def proposed_defense(
     cluster_0_cka = np.mean(feature_matrix[labels == 0, 2])
     cluster_1_cka = np.mean(feature_matrix[labels == 1, 2])
     
-    # Suspicion rule: High norm = bad, Low CKA = bad.
-    # We normalize these two metrics across the two clusters to compare them.
+    cluster_0_cos = np.mean(feature_matrix[labels == 0, 1])
+    cluster_1_cos = np.mean(feature_matrix[labels == 1, 1])
+    
+    # Suspicion rule: High norm = bad, Low CKA = bad, Low CosSim (negative) = bad.
+    # We normalize these metrics across the two clusters to compare them.
     norm_sum = cluster_0_norm + cluster_1_norm + 1e-9
     cka_sum = cluster_0_cka + cluster_1_cka + 1e-9
+    # Shift cos from [-1, 1] to [0, 2] to avoid negative normalization issues
+    cos_0_shifted = cluster_0_cos + 1.0
+    cos_1_shifted = cluster_1_cos + 1.0
+    cos_sum = cos_0_shifted + cos_1_shifted + 1e-9
     
-    score_0 = (cluster_0_norm / norm_sum) - (cluster_0_cka / cka_sum)
-    score_1 = (cluster_1_norm / norm_sum) - (cluster_1_cka / cka_sum)
+    score_0 = (cluster_0_norm / norm_sum) - (cluster_0_cka / cka_sum) - (cos_0_shifted / cos_sum)
+    score_1 = (cluster_1_norm / norm_sum) - (cluster_1_cka / cka_sum) - (cos_1_shifted / cos_sum)
     
     # The cluster with the lower suspicion score is benign
     benign_label = 0 if score_0 < score_1 else 1
     
     selected_updates = [client_updates[i] for i in range(n_clients) if labels[i] == benign_label]
+    print(f"  [Proposed Defense] Filtered out {n_clients - len(selected_updates)} malicious updates.")
+
     
     if not selected_updates:
         selected_updates = client_updates

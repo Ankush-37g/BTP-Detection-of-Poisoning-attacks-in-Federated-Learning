@@ -12,7 +12,7 @@ This project investigates whether combining **update-level features** (gradient 
 
 This is treated as a **hypothesis** to be validated experimentally, not a claim.
 
----
+--- 
 
 ## Project Architecture
 

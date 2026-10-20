@@ -1,0 +1,29 @@
+{
+  "experiment_id": "mnist_noniid_a0.5_c10_r10_atk_sign_flip_def_proposed_seed42",
+  "config": {
+    "dataset": "mnist",
+    "model": "lenet5",
+    "num_clients": 10,
+    "clients_per_round": 10,
+    "local_epochs": 2,
+    "batch_size": 32,
+    "lr": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "partition": "noniid",
+    "alpha": 0.5,
+    "attack": "sign_flip",
+    "malicious_fraction": 0.3,
+    "results_dir": "experiments/results",
+    "num_rounds": 10,
+    "scale_factor": 10.0,
+    "defense": "proposed",
+    "seed": 42
+  },
+  "start_datetime": "2026-10-11T01:00:12.701182",
+  "total_time_seconds": 146.38,
+  "total_rounds": 10,
+  "final_test_accuracy": 0.9597,
+  "final_test_loss": 0.13941593002818992,
+  "best_test_accuracy": 0.9685
+}
